@@ -1,0 +1,1 @@
+{% if w.remaining is not None and w.reg == "open" %}<span class="seats{% if w.remaining <= 5 %} seats-low{% endif %}"><i class="dot" aria-hidden="true"></i>{{ w.remaining }} seat{{ w.remaining|pluralize }} left</span>{% endif %}

@@ -1,0 +1,16 @@
+<div style="font-family:Arial,sans-serif;max-width:560px;color:#222">
+  <h3>New registration</h3>
+  <table style="border-collapse:collapse;font-size:15px">
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Name</b></td><td>{{ reg.full_name }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Email</b></td><td>{{ reg.email }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Phone</b></td><td>{{ reg.phone }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>College</b></td><td>{{ reg.college }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Department</b></td><td>{{ reg.department }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Year</b></td><td>{{ reg.year_of_study }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Workshop</b></td><td>{{ w.title }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Registration ID</b></td><td>{{ reg.registration_id }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Registered at</b></td><td>{{ reg.registered_at }} IST</td></tr>
+    {% if reg.payment_reference %}<tr><td style="padding:6px 12px 6px 0;color:#555"><b>Payment ref</b></td><td>{{ reg.payment_reference }}</td></tr>{% endif %}
+  </table>
+  <p><a href="{{ SITE_URL }}/dashboard/registrations/">Open the dashboard</a></p>
+</div>

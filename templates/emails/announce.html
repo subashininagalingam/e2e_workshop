@@ -1,0 +1,20 @@
+<div style="font-family:Arial,sans-serif;max-width:580px;margin:auto;color:#222">
+  <div style="height:5px;background:linear-gradient(90deg,#b5202b 33%,#c9a24a 33% 66%,#4a8a28 66%)"></div>
+  <h2 style="color:#b5202b;margin:16px 0 4px;font-family:Georgia,serif">A new workshop is coming</h2>
+  {% if message %}<p style="white-space:pre-line">{{ message }}</p>{% else %}<p>Hi {{ name }}, you attended one of our earlier workshops, so we wanted you to hear about this one first.</p>{% endif %}
+  {% if poster_url %}<p><img src="{{ poster_url }}" alt="{{ w.title }}" style="max-width:100%;border-radius:10px"></p>{% endif %}
+  <h3 style="margin:8px 0">{{ w.title }}</h3>
+  <table style="border-collapse:collapse;font-size:15px">
+    <tr><td style="padding:5px 12px 5px 0;color:#555"><b>Date</b></td><td>{{ w.start_datetime|date:"l, j F Y" }}</td></tr>
+    <tr><td style="padding:5px 12px 5px 0;color:#555"><b>Time</b></td><td>{{ w.time_range }}</td></tr>
+    <tr><td style="padding:5px 12px 5px 0;color:#555"><b>Mode</b></td><td>{{ w.get_mode_display }}</td></tr>
+    {% if w.venue and w.mode != "online" %}<tr><td style="padding:5px 12px 5px 0;color:#555"><b>Venue</b></td><td>{{ w.venue }}</td></tr>{% endif %}
+    <tr><td style="padding:5px 12px 5px 0;color:#555"><b>Fee</b></td><td>{% if w.has_fee %}&#8377;{{ w.fee|floatformat:"-2" }}{% else %}Free{% endif %}</td></tr>
+  </table>
+  {% if w.description %}<p style="white-space:pre-line">{{ w.description|truncatechars:400 }}</p>{% endif %}
+  {% if w.topics_list %}<p><b>What we will cover</b></p><ul>{% for t in w.topics_list|slice:":6" %}<li>{{ t }}</li>{% endfor %}</ul>{% endif %}
+  {% if has_attachments %}<p style="color:#555">The brochure is attached to this email.</p>{% endif %}
+  <p style="margin:22px 0"><a href="{{ register_url }}" style="background:#b5202b;color:#fff;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:bold">Register now</a></p>
+  <p>Questions? Contact {{ ORG.email }}{% if ORG.phones %} &middot; {{ ORG.phones|join:", " }}{% endif %}.</p>
+  <p style="color:#777;font-size:12px">{{ ORG.name }}. You are receiving this because you registered for an earlier workshop. <a href="{{ unsubscribe_url }}">Stop these emails</a>.</p>
+</div>

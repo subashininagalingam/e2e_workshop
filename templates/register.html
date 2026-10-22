@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Register | Errors2Experts Weekly Workshops{% endblock %}
+{% block content %}
+<div class="container py-5"><div class="row justify-content-center"><div class="col-lg-8 col-xl-7">
+  <h1 class="fw-bold mb-1">Workshop Registration</h1>
+  <p class="text-secondary mb-4">Fill in your details. If the workshop has a fee, the payment QR appears next.</p>
+
+  {% if notice %}<div class="alert alert-warning">{{ notice }}</div>{% endif %}
+
+  {% if not form %}
+    <div class="state-box"><i class="bi bi-calendar-x"></i><div class="fw-bold text-dark">No workshops are open for registration right now</div><div>The next workshop will appear on this page when it is published. <a href="{% url 'workshop_list' %}">See all workshops</a></div></div>
+  {% else %}
+    <div id="summary" class="mb-3" aria-live="polite"></div>
+    {{ meta|json_script:"workshop-meta" }}
+    <form method="post" id="reg-form" class="form-card" enctype="multipart/form-data" novalidate data-has-errors="{{ has_errors|yesno:'1,0' }}">
+      {% csrf_token %}
+      <input type="hidden" name="ts" value="{{ ts }}">
+      <div class="steps" id="steps" hidden><div class="st on" id="st1"><b>1</b><span>Your details</span></div><div class="st" id="st2"><b>2</b><span>Pay and upload screenshot</span></div></div>
+      {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{% for e in form.non_field_errors %}<div>{{ e }}</div>{% endfor %}</div>{% endif %}
+
+      <div id="step1">
+        <div class="mb-3">
+          <label for="{{ form.workshop.id_for_label }}" class="form-label req">Workshop</label>
+          {{ form.workshop }}
+          {% for e in form.workshop.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="mb-3" id="mode-box">
+          <span class="form-label req d-block" id="mode-label">Participation mode <span class="text-secondary fw-normal small">(hybrid workshops only)</span></span>
+          <div role="radiogroup" aria-labelledby="mode-label">
+            {% for radio in form.participation_mode %}<div class="form-check form-check-inline">{{ radio.tag }}<label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label></div>{% endfor %}
+          </div>
+          {% for e in form.participation_mode.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+        </div>
+
+        <h3 class="form-section">About you</h3>
+        <div class="row g-3 mb-2">
+          <div class="col-12"><label for="{{ form.full_name.id_for_label }}" class="form-label{% if form.full_name.field.required %} req{% endif %}">{{ form.full_name.label }}</label>{{ form.full_name }}{% for e in form.full_name.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-md-6"><label for="{{ form.email.id_for_label }}" class="form-label{% if form.email.field.required %} req{% endif %}">{{ form.email.label }}</label>{{ form.email }}{% for e in form.email.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-md-6"><label for="{{ form.phone.id_for_label }}" class="form-label{% if form.phone.field.required %} req{% endif %}">{{ form.phone.label }}</label>{{ form.phone }}{% for e in form.phone.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-12"><label for="{{ form.current_address.id_for_label }}" class="form-label{% if form.current_address.field.required %} req{% endif %}">{{ form.current_address.label }}</label>{{ form.current_address }}{% for e in form.current_address.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+        </div>
+        <h3 class="form-section">Education</h3>
+        <div class="row g-3 mb-2">
+          <div class="col-12"><label for="{{ form.college.id_for_label }}" class="form-label{% if form.college.field.required %} req{% endif %}">{{ form.college.label }}</label>{{ form.college }}{% for e in form.college.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-md-6"><label for="{{ form.education_qualification.id_for_label }}" class="form-label{% if form.education_qualification.field.required %} req{% endif %}">{{ form.education_qualification.label }}</label>{{ form.education_qualification }}{% for e in form.education_qualification.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-md-6"><label for="{{ form.current_status.id_for_label }}" class="form-label{% if form.current_status.field.required %} req{% endif %}">{{ form.current_status.label }}</label>{{ form.current_status }}{% for e in form.current_status.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+        </div>
+        <h3 class="form-section">Your interests</h3>
+        <div class="row g-3 mb-2">
+          <div class="col-12"><label for="{{ form.heard_from.id_for_label }}" class="form-label{% if form.heard_from.field.required %} req{% endif %}">{{ form.heard_from.label }}</label>{{ form.heard_from }}{% for e in form.heard_from.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-md-6"><label for="{{ form.interest_domain.id_for_label }}" class="form-label{% if form.interest_domain.field.required %} req{% endif %}">{{ form.interest_domain.label }}</label>{{ form.interest_domain }}{% for e in form.interest_domain.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-md-6"><label for="{{ form.skill_level.id_for_label }}" class="form-label{% if form.skill_level.field.required %} req{% endif %}">{{ form.skill_level.label }}</label>{{ form.skill_level }}{% for e in form.skill_level.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+        </div>
+        <h3 class="form-section">Free demo class</h3>
+        <div class="row g-3 mb-2">
+          <div class="col-12"><label for="{{ form.demo_interest.id_for_label }}" class="form-label{% if form.demo_interest.field.required %} req{% endif %}">{{ form.demo_interest.label }}</label>{{ form.demo_interest }}{% for e in form.demo_interest.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-md-6" data-demo><label for="{{ form.demo_mode.id_for_label }}" class="form-label">{{ form.demo_mode.label }}</label>{{ form.demo_mode }}</div>
+          <div class="col-md-6" data-demo><label for="{{ form.demo_slot.id_for_label }}" class="form-label">{{ form.demo_slot.label }}</label>{{ form.demo_slot }}</div>
+        </div>
+        <h3 class="form-section">Anything else</h3>
+        <div class="row g-3">
+          <div class="col-12"><label for="{{ form.queries.id_for_label }}" class="form-label{% if form.queries.field.required %} req{% endif %}">{{ form.queries.label }}</label>{{ form.queries }}{% for e in form.queries.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-12"><label for="{{ form.referred_by.id_for_label }}" class="form-label{% if form.referred_by.field.required %} req{% endif %}">{{ form.referred_by.label }}</label>{{ form.referred_by }}{% for e in form.referred_by.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+        </div>
+
+        <div id="cert-box" class="cert-choice mt-4" hidden>
+          <h3 class="form-section mt-0">Certificate</h3>
+          <span class="form-label req d-block" id="cert-label">{{ form.wants_certificate.label }}</span>
+          <p class="small text-secondary mb-2">The certificate costs &#8377;<span id="cert-fee"></span>. Choose <b>No</b> to register without paying. You can still attend.</p>
+          <div role="radiogroup" aria-labelledby="cert-label">{% for radio in form.wants_certificate %}<div class="form-check form-check-inline">{{ radio.tag }}<label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label></div>{% endfor %}</div>
+          {% for e in form.wants_certificate.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="form-check mt-3">
+          {{ form.consent }}<label class="form-check-label" for="{{ form.consent.id_for_label }}">{{ form.consent.label }}</label>
+          {% for e in form.consent.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <section id="step2" class="mt-4" hidden aria-labelledby="pay-h">
+        <div class="pay-panel">
+          <h2 class="h5 fw-bold mb-3" id="pay-h">Pay and attach your screenshot</h2>
+          <div class="row g-3 align-items-center">
+            <div class="col-sm-5 text-center"><img id="pay-qr" class="pay-qr" src="" alt="Payment QR code for this workshop"></div>
+            <div class="col-sm-7">
+              <div class="text-secondary small">Amount to pay</div>
+              <div class="pay-amount mb-2">₹<span id="pay-fee"></span></div>
+              <div class="small mb-2" id="pay-upi-line">UPI ID: <strong id="pay-upi"></strong></div>
+              <ol class="small ps-3 mb-0"><li>Scan the QR with any UPI app and pay the amount.</li><li>Take a screenshot of the successful payment.</li><li>Attach it below and submit.</li></ol>
+            </div>
+          </div>
+          <hr>
+          <label for="{{ form.payment_screenshot.id_for_label }}" class="form-label req">Payment screenshot</label>
+          {{ form.payment_screenshot }}
+          {% for e in form.payment_screenshot.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          <img id="proof-preview" class="proof-preview" alt="Preview of your payment screenshot" hidden>
+          <div class="mt-3"><label for="{{ form.payment_reference.id_for_label }}" class="form-label">{{ form.payment_reference.label }}</label>{{ form.payment_reference }}</div>
+          <div class="form-text">The organisers check every payment before confirming your seat.</div>
+        </div>
+      </section>
+
+      <div class="hp-field" aria-hidden="true"><label for="{{ form.website.id_for_label }}">Website</label>{{ form.website }}</div>
+
+      <button class="btn btn-e2e btn-lg w-100 mt-4" id="next" type="button" hidden>Continue to payment</button>
+      <button class="btn btn-e2e btn-lg w-100 mt-4" id="submit" type="submit">Submit Registration</button>
+    </form>
+  {% endif %}
+</div></div></div>
+{% endblock %}

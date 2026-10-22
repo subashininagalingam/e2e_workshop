@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Certificate setup | Errors2Experts{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block content %}
+<div class="container py-4">
+  {% include "_dash_nav.html" with active="certificates" %}
+  <h1 class="h3 mb-1">Certificate for {{ w.title }}</h1>
+  <p class="text-secondary">Upload this workshop's blank certificate, then move the name until it sits exactly where you want it. The preview updates as you change the numbers.</p>
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <form method="post" enctype="multipart/form-data" class="form-card" id="cert-form" data-preview="{% url 'certificate_preview' w.pk %}">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-danger">{% for e in form.non_field_errors %}<div>{{ e }}</div>{% endfor %}</div>{% endif %}
+        <div class="mb-3"><label class="form-label" for="{{ form.cert_template.id_for_label }}">1. Certificate template (JPG or PNG)</label>{{ form.cert_template }}
+          {% for e in form.cert_template.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          <div class="form-text">{% if w.has_certificate %}A template is uploaded. Choose a file only if you want to replace it.{% else %}No template uploaded yet. Export your design without a name on it.{% endif %}</div></div>
+        <div class="row g-3 mb-3">
+          <div class="col-6"><label class="form-label" for="{{ form.cert_name_x.id_for_label }}">2. Left to right (%)</label>{{ form.cert_name_x }}{% for e in form.cert_name_x.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-6"><label class="form-label" for="{{ form.cert_name_y.id_for_label }}">Top to bottom (%)</label>{{ form.cert_name_y }}{% for e in form.cert_name_y.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-6"><label class="form-label" for="{{ form.cert_font_size.id_for_label }}">Name size (%)</label>{{ form.cert_font_size }}{% for e in form.cert_font_size.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-6"><label class="form-label" for="{{ form.cert_color.id_for_label }}">Name colour</label>{{ form.cert_color }}{% for e in form.cert_color.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+          <div class="col-12"><label class="form-label" for="{{ form.cert_font.id_for_label }}">Name font</label>{{ form.cert_font }}<div class="form-text">Need another font? Put a .ttf file in <code>static/fonts</code> and it appears here.</div></div>
+        </div>
+        <div class="cert-id-box mb-3">
+          <label class="form-label" for="{{ form.cert_id_start.id_for_label }}">3. Certificate ID (optional)</label>
+          {{ form.cert_id_start }}{% for e in form.cert_id_start.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          <div class="form-text">{{ form.cert_id_start.help_text }}{% if w.cert_id_prefix %} <b>Next certificate to be issued: {{ w.next_certificate_id }}</b>.{% endif %} Changing this restarts the numbering, so change it only before any certificate is sent.</div>
+          <div class="row g-3 mt-0">
+            <div class="col-4"><label class="form-label small" for="{{ form.cert_id_x.id_for_label }}">Left to right (%)</label>{{ form.cert_id_x }}</div>
+            <div class="col-4"><label class="form-label small" for="{{ form.cert_id_y.id_for_label }}">Top to bottom (%)</label>{{ form.cert_id_y }}</div>
+            <div class="col-4"><label class="form-label small" for="{{ form.cert_id_size.id_for_label }}">Size (%)</label>{{ form.cert_id_size }}</div>
+          </div>
+        </div>
+        <div class="mb-3"><label class="form-label" for="sample-name">Preview with this name</label><input class="form-control" id="sample-name" value="{{ sample_name }}" maxlength="80"></div>
+        <button class="btn btn-e2e w-100" type="submit"><i class="bi bi-save me-1"></i>Save certificate settings</button>
+      </form>
+      {% if w.has_certificate %}
+      <form method="post" action="{% url 'certificate_test' w.pk %}" class="mt-3">{% csrf_token %}<button class="btn btn-outline-e2e w-100" type="submit"><i class="bi bi-envelope-paper me-1"></i>Email me a sample certificate</button><div class="form-text">Sent to your own email, to check the layout and that email sending works.</div></form>
+      {% endif %}
+    </div>
+    <div class="col-lg-7">
+      <div class="card-e2e p-2">
+        {% if w.has_certificate %}<img id="cert-preview" class="img-fluid d-block w-100" src="{% url 'certificate_preview' w.pk %}" alt="Certificate preview with a sample name">
+        {% else %}<div class="state-box border-0"><i class="bi bi-award"></i><div class="fw-bold text-dark">Upload a template to see the preview</div></div>{% endif %}
+      </div>
+      <p class="small text-secondary mt-2">The preview is only a sample. Each student's own name, taken from their registration, is written on their certificate. Names in ALL CAPS or all lowercase are tidied to Title Case.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

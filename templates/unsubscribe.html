@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Unsubscribe | Errors2Experts{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container py-5"><div class="row justify-content-center"><div class="col-lg-6"><div class="form-card text-center">
+  {% if bad %}<h1 class="h3">This link is not valid</h1><p class="text-secondary">Please use the link from the latest email, or write to {{ ORG.email }}.</p>
+  {% elif done %}<div class="display-4 text-success"><i class="bi bi-check-circle-fill"></i></div><h1 class="h3">You are unsubscribed</h1><p class="text-secondary">{{ email }} will not get new-workshop emails again. You will still get your own registration and certificate emails.</p>
+  {% else %}<h1 class="h3">Stop new-workshop emails?</h1><p class="text-secondary">We will stop emailing <strong>{{ email }}</strong> about new workshops.</p>
+    <form method="post">{% csrf_token %}<input type="hidden" name="t" value="{{ token }}"><button class="btn btn-e2e" type="submit">Yes, unsubscribe me</button></form>{% endif %}
+</div></div></div></div>
+{% endblock %}

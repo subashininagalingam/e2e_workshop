@@ -1,0 +1,9 @@
+<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#222">
+  <div style="height:5px;background:linear-gradient(90deg,#b5202b 33%,#c9a24a 33% 66%,#4a8a28 66%)"></div>
+  <h2 style="color:#b5202b;margin:16px 0 4px;font-family:Georgia,serif">Your certificate is ready</h2>
+  <p>Hi {{ reg.full_name }}, thank you for attending <b>{{ w.title }}</b> on {{ w.start_datetime|date:"j F Y" }} and for sharing your feedback.</p>
+  <p>Your certificate is attached to this email as a PDF.{% if reg.certificate_id %} Certificate ID: <b>{{ reg.certificate_id }}</b>.{% endif %}</p>
+  <p>We would love to see you at our next workshop. Watch <a href="{{ SITE_URL }}/workshops/">{{ SITE_URL }}/workshops/</a> for what is coming.</p>
+  <p>Need help? Contact {{ ORG.email }}{% if ORG.phone %} &middot; {{ ORG.phone }}{% endif %}.</p>
+  <p style="color:#777;font-size:13px">{{ ORG.name }}</p>
+</div>

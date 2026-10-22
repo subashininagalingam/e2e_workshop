@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }} QR</title>
+<style>body{font-family:Arial,sans-serif;text-align:center;margin:0;padding:40px}img{width:min(560px,90%)}h1{margin:0 0 12px;color:#1b8a3f}p{color:#555;word-break:break-all}@page{margin:12mm}.noprint button{margin-top:16px;padding:10px 20px;font-size:16px}@media print{.noprint{display:none}}</style></head>
+<body><h1>{{ title }}</h1><img src="{% url 'qr_png' slug %}" alt="QR code"><p>{{ url }}</p>
+<div class="noprint"><button onclick="window.print()">Print</button></div>
+<script>window.addEventListener('load',function(){setTimeout(function(){window.print()},400)})</script></body></html>

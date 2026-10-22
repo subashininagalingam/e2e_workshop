@@ -1,0 +1,7 @@
+{% extends "admin/index.html" %}
+{% block content %}
+<div class="module" style="margin-bottom:16px"><h2>Registrations</h2>
+  <p style="padding:10px"><a class="button" href="{% url 'dashboard' %}" style="padding:8px 14px;display:inline-block">Open registrations dashboard</a>
+  &nbsp; Registrations are stored only in the Excel file. Workshops are managed below.</p></div>
+{{ block.super }}
+{% endblock %}

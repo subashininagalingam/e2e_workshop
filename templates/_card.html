@@ -1,0 +1,12 @@
+<div class="col-md-6 col-lg-4"><article class="ticket ticket-light">
+  {% include "_poster.html" with variant="card" %}
+  <div class="p-3 d-flex flex-column flex-grow-1">
+    <div class="d-flex flex-wrap gap-2 mb-2">{% include "_pills.html" %}</div>
+    <h3 class="h5 fw-bold">{{ w.title }}</h3>
+    <div class="meta-row mb-2"><span><i class="bi bi-calendar-event"></i>{{ w.start_datetime|date:"D, j M Y" }}</span><span><i class="bi bi-clock"></i>{{ w.time_range }}</span>{% include "_seats.html" %}</div>
+    <p class="text-secondary small flex-grow-1">{{ w.description|truncatechars:140 }}</p>
+    <div class="stub d-flex gap-2 pt-3 mt-2">
+      <a class="btn btn-outline-e2e btn-sm flex-fill" href="{{ w.get_absolute_url }}">View details</a>
+      {% if w.reg == "open" %}<a class="btn btn-e2e btn-sm flex-fill" href="{% url 'register' %}?w={{ w.slug }}">Register Now</a>{% elif w.phase == "completed" %}<a class="btn btn-e2e-green btn-sm flex-fill" href="{% url 'feedback' %}?w={{ w.slug }}">Give feedback</a>{% else %}<button class="btn btn-secondary btn-sm flex-fill" disabled>{% if w.reg == "full" %}Full{% else %}Closed{% endif %}</button>{% endif %}
+    </div>
+  </div></article></div>

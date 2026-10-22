@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Registration Successful | Errors2Experts{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<div class="container py-5"><div class="row justify-content-center"><div class="col-lg-7">
+{% if not data or not w %}
+  <div class="state-box"><i class="bi bi-info-circle"></i><div class="fw-bold text-dark">No recent registration found</div><div><a href="{% url 'register' %}">Go to the registration page</a></div></div>
+{% else %}
+  <div class="form-card text-center">
+    <div class="display-4 text-success"><i class="bi bi-check-circle-fill"></i></div>
+    <h1 class="h3 fw-bold">You're registered, {{ data.name }}!</h1>
+    <p class="text-secondary">{% if data.emailed %}A confirmation email has been sent to <strong>{{ data.email }}</strong>.{% else %}Your registration is saved. We could not send the confirmation email just now; the organisers will resend it. Please keep your registration ID.{% endif %}</p>
+    {% if data.paid %}<div class="alert alert-success text-start"><i class="bi bi-receipt me-1"></i>Your payment screenshot was received. The organisers will verify it. Your certificate is emailed after that, once you have also shared your feedback.</div>{% elif data.certificate == "no" %}<div class="alert alert-info text-start"><i class="bi bi-info-circle me-1"></i>You registered without a certificate, so no payment is needed.</div>{% endif %}
+    <div class="card-e2e p-3 text-start my-3">
+      <div class="small text-secondary">Registration ID</div><div class="fw-bold fs-5 mb-2">{{ data.id }}</div>
+      <div class="fw-semibold">{{ w.title }}</div>
+      <div class="meta-row mt-1"><span><i class="bi bi-calendar-event"></i>{{ w.start_datetime|date:"D, j M Y" }}</span><span><i class="bi bi-clock"></i>{{ w.time_range }}</span><span class="text-capitalize"><i class="bi bi-diagram-2"></i>{{ data.mode }}</span>{% if w.venue and data.mode != "online" %}<span><i class="bi bi-geo-alt"></i>{{ w.venue }}</span>{% endif %}</div>
+    </div>
+    <p class="mb-2" id="count-line" aria-live="polite" data-url="{{ redirect_url }}" data-seconds="12"></p>
+    <div class="d-flex flex-wrap gap-2 justify-content-center">
+      <a class="btn btn-e2e" href="{{ redirect_url }}">Go to errors2experts.com now</a>
+      <button class="btn btn-outline-e2e" id="stay" type="button">Stay on this page</button>
+    </div>
+  </div>
+{% endif %}
+</div></div></div>
+{% endblock %}

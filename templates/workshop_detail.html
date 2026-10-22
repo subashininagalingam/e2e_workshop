@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ w.title }} | Errors2Experts{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+  {% if is_preview %}<div class="alert alert-warning"><strong>Draft preview.</strong> Only staff can see this page. Students cannot see it until the workshop is published.</div>{% endif %}
+  <nav aria-label="breadcrumb"><ol class="breadcrumb small"><li class="breadcrumb-item"><a href="{% url 'workshop_list' %}">Workshops</a></li><li class="breadcrumb-item active" aria-current="page">{{ w.title }}</li></ol></nav>
+
+  <header class="detail-head mb-4">
+    <div class="d-flex flex-wrap gap-2 mb-2">{% include "_pills.html" %}</div>
+    <h1 class="page-title mb-2">{{ w.title }}</h1>
+    <div class="meta-row"><span><i class="bi bi-calendar-event"></i>{{ w.start_datetime|date:"D, j M Y" }}</span><span><i class="bi bi-clock"></i>{{ w.time_range }}</span>{% if w.duration_text %}<span><i class="bi bi-hourglass-split"></i>{{ w.duration_text }}</span>{% endif %}<span class="text-capitalize"><i class="bi bi-diagram-2"></i>{{ w.get_mode_display }}</span>{% if w.venue and w.mode != "online" %}<span><i class="bi bi-geo-alt"></i>{{ w.venue }}</span>{% endif %}</div>
+  </header>
+
+  <div class="row g-4 align-items-start">
+    <div class="col-lg-8">
+      <div class="detail-poster mb-4">{% include "_poster.html" with variant="detail" %}</div>
+      <section class="card-e2e detail-card mb-4"><h2 class="h4">About this workshop</h2><p class="mb-0" style="white-space:pre-line">{{ w.description }}</p></section>
+      {% if w.topics_list or w.outcomes_list %}
+      <div class="row g-4 mb-4">
+        {% if w.topics_list %}<div class="col-md-6"><section class="card-e2e detail-card h-100"><h2 class="h4">Topics</h2><ul class="check-list mb-0">{% for t in w.topics_list %}<li>{{ t }}</li>{% endfor %}</ul></section></div>{% endif %}
+        {% if w.outcomes_list %}<div class="col-md-6"><section class="card-e2e detail-card h-100"><h2 class="h4">Learning outcomes</h2><ul class="check-list mb-0">{% for t in w.outcomes_list %}<li>{{ t }}</li>{% endfor %}</ul></section></div>{% endif %}
+      </div>{% endif %}
+      {% if w.trainer %}<section class="card-e2e detail-card mb-4"><h2 class="h4">Trainer</h2><div class="fw-semibold"><i class="bi bi-person-badge text-success me-2"></i>{{ w.trainer }}</div>{% if w.trainer_bio %}<p class="mb-0 mt-2 text-secondary">{{ w.trainer_bio }}</p>{% endif %}</section>{% endif %}
+      {% if w.gallery.all %}<section class="mb-2"><h2 class="h4 mb-3">Photos from this workshop</h2><div class="gallery">{% for g in w.gallery.all %}<figure data-lightbox data-src="{{ g.image.url }}" data-cap="{{ g.caption }}"><img src="{{ g.image.url }}" alt="{{ g.caption|default:g.get_kind_display }}" loading="lazy">{% if g.caption %}<figcaption>{{ g.caption }}</figcaption>{% endif %}</figure>{% endfor %}</div></section>{% endif %}
+    </div>
+
+    <div class="col-lg-4"><div class="detail-aside">
+      <aside class="card-e2e detail-card mb-4" aria-label="Registration">
+        {% include "_countdown.html" %}
+        <div class="d-flex flex-wrap gap-3 align-items-center mb-3">{% include "_seats.html" %}{% if w.has_fee %}<span class="fw-bold"><i class="bi bi-currency-rupee text-success"></i>{{ w.fee|floatformat:"-2" }}{% if w.pay_optional %} <span class="small text-secondary fw-normal">for the certificate (optional)</span>{% endif %}</span>{% else %}<span class="fw-bold text-success">Free</span>{% endif %}</div>
+        {% if w.registration_deadline %}<div class="small text-secondary mb-3"><i class="bi bi-alarm text-danger me-1"></i>Register by {{ w.registration_deadline|date:"j M Y, g:i A" }} IST</div>{% endif %}
+        {% if w.reg == "open" %}<a class="btn btn-e2e w-100 mb-2" href="{% url 'register' %}?w={{ w.slug }}">Register Now</a>{% else %}<button class="btn btn-secondary w-100 mb-2" disabled>{% if w.phase == "completed" %}Workshop completed{% elif w.reg == "full" %}Registration full{% else %}Registration closed{% endif %}</button>{% endif %}
+        {% if w.phase == "completed" %}<a class="btn btn-e2e-green w-100 mb-2" href="{% url 'feedback' %}?w={{ w.slug }}"><i class="bi bi-chat-heart me-1"></i>Give feedback</a>{% endif %}
+        <button class="btn btn-outline-e2e w-100" type="button" data-share data-title="{{ w.title }}"><i class="bi bi-share me-1"></i>Share</button>
+      </aside>
+      {% if w.status == "published" %}
+      <aside class="card-e2e detail-card qr-wrap" aria-label="QR code for this workshop">
+        <h2 class="h5">QR code for this workshop</h2>
+        <img src="{% url 'qr_png' w.slug %}" alt="QR code to register for {{ w.title }}" class="my-2" style="max-width:240px;width:100%" loading="lazy">
+        <div class="d-flex gap-2 justify-content-center no-print">
+          <a class="btn btn-outline-e2e btn-sm" href="{% url 'qr_png' w.slug %}?download=1"><i class="bi bi-download me-1"></i>PNG</a>
+          <a class="btn btn-outline-e2e btn-sm" href="{% url 'qr_print' w.slug %}" target="_blank" rel="noopener"><i class="bi bi-printer me-1"></i>Print</a>
+        </div>
+      </aside>{% endif %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}

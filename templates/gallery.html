@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Gallery | Errors2Experts{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="page-title mb-1">Gallery</h1>
+  <p class="text-secondary mb-4">Students at our previous workshops, and what they told us afterwards.</p>
+  {% if photos %}
+  <h2 class="section-title mb-3">Students at our workshops</h2>
+  <div class="gallery mb-5">{% for g in photos %}<figure data-lightbox data-src="{{ g.image.url }}" data-cap="{{ g.caption }}{% if g.workshop %}{% if g.caption %} - {% endif %}{{ g.workshop.title }}{% endif %}"><img src="{{ g.image.url }}" alt="{{ g.caption|default:'Students at a workshop' }}" loading="lazy">{% if g.caption %}<figcaption>{{ g.caption }}</figcaption>{% endif %}</figure>{% endfor %}</div>
+  {% endif %}
+  {% if shots %}
+  <h2 class="section-title mb-3">Student feedback</h2>
+  <div class="gallery gallery-tall mb-5">{% for g in shots %}<figure data-lightbox data-src="{{ g.image.url }}" data-cap="{{ g.caption }}"><img src="{{ g.image.url }}" alt="{{ g.caption|default:'Student feedback' }}" loading="lazy"></figure>{% endfor %}</div>
+  {% endif %}
+  {% if not photos and not shots %}<div class="state-box"><i class="bi bi-images"></i><div class="fw-bold text-dark">Photos will appear here after our workshops</div><div><a href="{% url 'workshop_list' %}">See upcoming workshops</a></div></div>{% endif %}
+  <a class="btn btn-e2e" href="{% url 'feedback' %}"><i class="bi bi-chat-heart me-1"></i>Attended a workshop? Share your feedback</a>
+</div>
+{% endblock %}

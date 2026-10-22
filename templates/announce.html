@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Announce {{ w.title }} | Errors2Experts{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block content %}
+<div class="container py-4">
+  {% include "_dash_nav.html" with active="announce" %}
+  <h1 class="h3 mb-1">Announce: {{ w.title }}</h1>
+  <p class="text-secondary">{{ w.start_datetime|date:"l, j F Y" }}, {{ w.time_range }} &middot; {{ w.get_mode_display }}{% if w.has_fee %} &middot; &#8377;{{ w.fee|floatformat:"-2" }}{% endif %}</p>
+  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+  {% if w.status != "published" %}<div class="alert alert-warning">This workshop is not published yet. <a href="{% url 'admin:workshops_workshop_change' w.pk %}">Publish it</a> before sending, so the Register link in the email works. You can still write and save the email now.</div>{% endif %}
+
+  {% if st %}
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="card-e2e stat-card"><div class="text-secondary small">Past students</div><div class="n">{{ st.total }}</div></div></div>
+    <div class="col-6 col-md-3"><div class="card-e2e stat-card"><div class="text-secondary small">Already emailed</div><div class="n">{{ st.sent }}</div></div></div>
+    <div class="col-6 col-md-3"><div class="card-e2e stat-card"><div class="text-secondary small">Still to email</div><div class="n">{{ st.remaining }}</div></div></div>
+    <div class="col-6 col-md-3"><div class="card-e2e stat-card"><div class="text-secondary small">Failed</div><div class="n">{{ st.failed }}</div></div></div>
+  </div>
+  <div class="how-bar mb-3"><i class="bi bi-shield-check me-1"></i><b>No duplicates:</b> each person is emailed once, even if they attended several workshops.{% if st.skipped %} {{ st.skipped }} past student{{ st.skipped|pluralize }} already registered for <i>this</i> workshop, so they are left out.{% endif %} Students whose payment was rejected or who unsubscribed are also left out.</div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" class="form-card">
+    {% csrf_token %}
+    <h2 class="h5 mb-3">Email content</h2>
+    <div class="mb-3"><label class="form-label" for="a-subject">Subject</label><input class="form-control" id="a-subject" name="subject" maxlength="200" value="{{ draft.subject }}"></div>
+    <div class="mb-3"><label class="form-label" for="a-message">Message</label><textarea class="form-control" id="a-message" name="message" rows="8" maxlength="4000">{{ draft.message }}</textarea>
+      <div class="form-text">Write what you want to say. Use <code>{name}</code> to put the student's name. The workshop details (date, time, mode, venue, fee, topics) and a <b>Register now</b> button are added below your message automatically, with an unsubscribe link. The meeting link is never included.</div></div>
+
+    <h2 class="h5 mt-4 mb-2">Brochures and files</h2>
+    {% if files %}<ul class="list-group mb-3">{% for f in files %}<li class="list-group-item d-flex justify-content-between align-items-center gap-2"><span class="text-truncate"><i class="bi bi-paperclip me-1"></i>{{ f.original_name }} <span class="text-secondary small">({{ f.size|filesizeformat }})</span></span><span class="form-check mb-0"><input class="form-check-input" type="checkbox" name="remove" value="{{ f.pk }}" id="rm-{{ f.pk }}"><label class="form-check-label small" for="rm-{{ f.pk }}">Remove when I save</label></span></li>{% endfor %}</ul>{% endif %}
+    <label class="form-label" for="a-files">Add files (you can pick several)</label>
+    <input class="form-control" id="a-files" type="file" name="files" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.ppt,.pptx">
+    <div class="form-text">PDF, JPG, PNG, WEBP, Word or PowerPoint. Up to {{ max_files }} files, {{ max_mb }} MB each. They are attached to every email.</div>
+
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <button class="btn btn-outline-secondary" type="submit" name="action" value="save"><i class="bi bi-save me-1"></i>Save only</button>
+      <button class="btn btn-outline-e2e" type="submit" name="action" value="test"><i class="bi bi-envelope-paper me-1"></i>Save and send me a test</button>
+      <button class="btn btn-e2e ms-md-auto" type="submit" name="action" value="send" {% if not st or not st.remaining %}disabled{% endif %} data-confirm-click="Email the next {{ batch }} past students now?"><i class="bi bi-megaphone me-1"></i>Save and send next {{ batch }}{% if st and st.remaining %} ({{ st.remaining }} left){% endif %}</button>
+    </div>
+    {% if st and st.remaining > batch %}<div class="form-text mt-2">Gmail allows roughly 500 emails a day, so a big list goes out in batches of {{ batch }}. Press the send button again for the next batch.</div>{% endif %}
+  </form>
+
+  {% if st and st.queue %}<div class="card-e2e p-3 mt-3"><h2 class="h6">Next in line</h2><div class="small text-secondary">{% for p in st.queue|slice:":12" %}{{ p.name }} &lt;{{ p.email }}&gt;{% if not forloop.last %}; {% endif %}{% endfor %}{% if st.queue|length > 12 %} &hellip; and {{ st.queue|length|add:"-12" }} more{% endif %}</div></div>{% endif %}
+</div>
+{% endblock %}

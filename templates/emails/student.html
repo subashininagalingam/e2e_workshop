@@ -1,0 +1,17 @@
+<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#222">
+  <h2 style="color:#b5202b;margin-bottom:4px">Registration Confirmed</h2>
+  <p>Hi {{ reg.full_name }}, you're registered for <b>{{ w.title }}</b>.</p>
+  <table style="border-collapse:collapse;font-size:15px">
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Registration ID</b></td><td>{{ reg.registration_id }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Workshop</b></td><td>{{ w.title }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Date &amp; time</b></td><td>{{ w.start_datetime|date:"l, j F Y" }}, {{ w.time_range }}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;color:#555"><b>Mode</b></td><td>{{ reg.participation_mode|title }}</td></tr>
+    {% if joining %}<tr><td style="padding:6px 12px 6px 0;color:#555"><b>Details</b></td><td>{{ joining }}</td></tr>{% endif %}
+  </table>
+  {% if reg.wants_certificate == "no" %}<p style="background:#f3f6ef;border-left:4px solid #4a8a28;padding:8px 12px">You chose to register without a certificate, so nothing needs to be paid. If you change your mind, write to {{ ORG.email }}.</p>
+  {% elif reg.payment_screenshot %}<p style="background:#fffbf0;border-left:4px solid #c9a24a;padding:8px 12px">Certificate fee: &#8377;{{ reg.amount|default:w.fee|floatformat:"-2" }}. We received your payment screenshot and the organisers will verify it. You do not need to pay again.</p>
+  <p>After the workshop, please share your feedback at <a href="{{ SITE_URL }}/feedback/">{{ SITE_URL }}/feedback/</a>. Your certificate is emailed once your payment is verified and your feedback is in.</p>
+  {% else %}<p>After the workshop, please share your feedback at <a href="{{ SITE_URL }}/feedback/">{{ SITE_URL }}/feedback/</a>.</p>{% endif %}
+  <p>Need help? Contact {{ ORG.email }}{% if ORG.phone %} · {{ ORG.phone }}{% endif %}.</p>
+  <p style="color:#777;font-size:13px">{{ ORG.name }}</p>
+</div>

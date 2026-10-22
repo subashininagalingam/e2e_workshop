@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Errors2Experts Weekly Workshops{% endblock %}
+{% block content %}
+<section class="hero"><div class="container"><div class="row align-items-center g-5">
+  <div class="col-lg-6">
+    <p class="fw-semibold mb-2 hero-kicker">{{ ORG.short }} IT Training &amp; IT Services</p>
+    <h1>Weekly workshops that turn errors into expertise.</h1>
+    <p class="tagline my-3">Learn practical skills. Build real-world confidence.</p>
+    <div class="d-flex flex-wrap gap-2 mb-3"><a href="{% url 'register' %}" class="btn btn-e2e btn-lg">Register Now</a><a href="{% url 'workshop_list' %}" class="btn btn-light-e2e btn-lg">All Workshops</a></div>
+    {% if review_count %}<div class="rating-badge">{% include "_stars.html" with rating=5 %}<span>{{ avg_rating }} from {{ review_count }} student review{{ review_count|pluralize }}</span></div>{% endif %}
+  </div>
+  <div class="col-lg-6">
+    {% if feat %}{% with w=feat %}
+    <article class="ticket ticket-tilt">
+      <div class="m-3 mb-0 hero-poster">{% include "_poster.html" with variant="wide" %}</div>
+      <div class="p-4 pb-3">
+        <div class="d-flex flex-wrap gap-2 mb-2"><span class="pill" style="background:var(--e2e-blush);color:var(--e2e-red-dark)"><i class="bi bi-star-fill"></i>{% if w.featured %}This week{% else %}Next up{% endif %}</span>{% include "_pills.html" %}</div>
+        <h2 class="h4 fw-bold">{{ w.title }}</h2>
+        <div class="meta-row">
+          <span><i class="bi bi-calendar-event"></i>{{ w.start_datetime|date:"D, j M Y" }}</span><span><i class="bi bi-clock"></i>{{ w.time_range }}</span>{% if w.duration_text %}<span><i class="bi bi-hourglass-split"></i>{{ w.duration_text }}</span>{% endif %}{% include "_seats.html" %}</div>
+        {% include "_countdown.html" %}
+      </div>
+      <div class="stub p-3 pt-3 d-flex gap-2">{% if w.reg == "open" %}<a class="btn btn-e2e flex-fill" href="{% url 'register' %}?w={{ w.slug }}">Register Now</a>{% else %}<button class="btn btn-secondary flex-fill" disabled>Registration {% if w.reg == "full" %}Full{% else %}Closed{% endif %}</button>{% endif %}<a class="btn btn-outline-e2e flex-fill" href="{{ w.get_absolute_url }}">Details</a></div>
+    </article>
+    {% endwith %}{% else %}
+    <div class="state-box"><i class="bi bi-calendar-plus"></i><div class="fw-bold text-dark">No workshop is open right now</div><div>The next workshop will appear here as soon as it is published.</div></div>
+    {% endif %}
+  </div>
+</div></div></section>
+
+<section class="section pb-0"><div class="container"><div class="row g-4 feature-row">
+  <div class="col-md-4"><div class="ic"><i class="bi bi-tools"></i></div><h2 class="h5">Hands-on sessions</h2><p class="text-secondary mb-0">Each session is built around skills you try yourself, not just slides.</p></div>
+  <div class="col-md-4"><div class="ic"><i class="bi bi-calendar-week"></i></div><h2 class="h5">A new one every week</h2><p class="text-secondary mb-0">The same registration link and QR code always lead to the current workshop.</p></div>
+  <div class="col-md-4"><div class="ic"><i class="bi bi-award"></i></div><h2 class="h5">Certificate by email</h2><p class="text-secondary mb-0">Pay, attend and share your feedback. Your certificate arrives in your inbox with your name on it.</p></div>
+</div></div></section>
+
+{% if feat and feat.topics_list or feat and feat.outcomes_list %}
+<section class="section pt-0"><div class="container"><div class="row g-4">
+  <div class="col-lg-6"><h2 class="section-title mb-3">Workshop topics</h2><ul class="check-list">{% for t in feat.topics_list %}<li>{{ t }}</li>{% empty %}<li class="text-secondary">Topics will be announced soon.</li>{% endfor %}</ul></div>
+  <div class="col-lg-6"><h2 class="section-title mb-3">What you will learn</h2><ul class="check-list">{% for t in feat.outcomes_list %}<li>{{ t }}</li>{% empty %}<li class="text-secondary">Learning outcomes will be announced soon.</li>{% endfor %}</ul></div>
+</div></div></section>
+{% endif %}
+
+{% if upcoming %}
+<section class="section pt-0"><div class="container">
+  <div class="d-flex justify-content-between align-items-end mb-3"><h2 class="section-title mb-0">More upcoming workshops</h2><a href="{% url 'workshop_list' %}" class="small fw-semibold">View all</a></div>
+  <div class="row g-4">{% for w in upcoming %}{% include "_card.html" %}{% endfor %}</div>
+</div></section>
+{% elif feat %}
+<section class="section pt-0"><div class="container text-center"><a class="btn btn-outline-e2e" href="{% url 'workshop_list' %}">See all workshops</a></div></section>
+{% endif %}
+
+{% if photos or shots or reviews or previous %}
+<section class="section pt-4" id="previous"><div class="container">
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4"><div><h2 class="section-title mb-0">Our previous workshops</h2></div><a class="btn btn-outline-e2e btn-sm" href="{% url 'feedback' %}"><i class="bi bi-chat-heart me-1"></i>Attended one? Share feedback</a></div>
+  {% if previous %}<div class="row g-4 mb-5">{% for w in previous %}{% include "_card.html" %}{% endfor %}</div>{% endif %}
+  {% if photos %}
+  <div class="d-flex justify-content-between align-items-end mb-3"><h3 class="h4 mb-0">Students at our workshops</h3><a class="small fw-semibold" href="{% url 'gallery' %}">See all photos</a></div>
+  <div class="gallery mb-4">{% for g in photos %}<figure data-lightbox data-src="{{ g.image.url }}" data-cap="{{ g.caption }}"><img src="{{ g.image.url }}" alt="{{ g.caption|default:'Students at a workshop' }}" loading="lazy">{% if g.caption %}<figcaption>{{ g.caption }}</figcaption>{% endif %}</figure>{% endfor %}</div>
+  {% endif %}
+</div></section>
+{% endif %}
+
+{% if shots or reviews %}
+<section class="section section-dark"><div class="container">
+  <h2 class="section-title mb-4">What students say</h2>
+  {% if shots %}<div class="shot-row mb-4" aria-label="Student feedback screenshots">{% for g in shots %}<figure data-lightbox data-src="{{ g.image.url }}" data-cap="{{ g.caption }}"><img src="{{ g.image.url }}" alt="{{ g.caption|default:'Student feedback screenshot' }}" loading="lazy"></figure>{% endfor %}</div>{% endif %}
+  {% if reviews %}<div class="row g-3">{% for r in reviews %}<div class="col-md-6 col-lg-4"><article class="review text-dark">
+    {% include "_stars.html" with rating=r.rating %}<p>{{ r.message|truncatechars:220 }}</p>
+    <div class="d-flex align-items-center gap-2"><div class="avatar" aria-hidden="true">{{ r.name|slice:":1"|upper }}</div><div><div class="fw-semibold lh-sm">{{ r.name }}</div><div class="small text-secondary">{{ r.workshop_title }}</div></div></div></article></div>{% endfor %}</div>{% endif %}
+</div></section>
+{% endif %}
+
+<section class="section pt-0"><div class="container">
+  <h2 class="section-title mb-3">Frequently asked questions</h2>
+  <div class="accordion" id="faqs">
+    <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#f1" aria-expanded="true" aria-controls="f1">How do I register?</button></h3><div id="f1" class="accordion-collapse collapse show" data-bs-parent="#faqs"><div class="accordion-body">Scan the Errors2Experts QR code or open the Register page, choose the workshop, fill in your details and submit.</div></div></div>
+    <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f2" aria-expanded="false" aria-controls="f2">Will I receive a confirmation?</button></h3><div id="f2" class="accordion-collapse collapse" data-bs-parent="#faqs"><div class="accordion-body">Yes. After your registration is saved, a confirmation email with your registration ID is sent to the address you provided. If it does not arrive, check spam or contact us.</div></div></div>
+    <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f3" aria-expanded="false" aria-controls="f3">What if registration shows Full or Closed?</button></h3><div id="f3" class="accordion-collapse collapse" data-bs-parent="#faqs"><div class="accordion-body">Registration closes when the seat limit is reached, the deadline passes, or the organisers close it. Check the Workshops page for the next one.</div></div></div>
+    <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f4" aria-expanded="false" aria-controls="f4">Can I register twice with the same email?</button></h3><div id="f4" class="accordion-collapse collapse" data-bs-parent="#faqs"><div class="accordion-body">Each email address can register once per workshop.</div></div></div>
+  </div>
+</div></section>
+
+<section class="section pt-0"><div class="container"><h2 class="section-title mb-3">Contact us</h2>
+  <div class="card-e2e p-4"><div class="row g-3">
+    <div class="col-md-4"><i class="bi bi-geo-alt text-success me-2"></i>{{ ORG.address }}</div>
+    <div class="col-md-4"><i class="bi bi-envelope text-success me-2"></i><a href="mailto:{{ ORG.email }}">{{ ORG.email }}</a></div>
+    <div class="col-md-4"><i class="bi bi-telephone text-success me-2"></i><a href="tel:{{ ORG.phone }}">{{ ORG.phone }}</a></div>
+    <div class="col-12"><a href="{{ ORG.website }}" target="_blank" rel="noopener">{{ ORG.website }}</a></div>
+  </div></div></div></section>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Certificates | Errors2Experts{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block content %}
+<div class="container py-4">
+  {% include "_dash_nav.html" with active="certificates" %}
+  {% if error %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% else %}
+  <div class="how-bar mb-3"><i class="bi bi-info-circle me-1"></i>Every workshop has its own certificate. Upload the template once, place the name, and certificates are emailed automatically when a student's payment is verified and feedback is submitted.</div>
+  <div class="row g-3">
+  {% for it in items %}<div class="col-lg-6"><div class="card-e2e p-3 h-100">
+    <div class="d-flex justify-content-between gap-2"><h2 class="h5 mb-1">{{ it.w.title }}</h2>{% if it.w.has_certificate %}<span class="badge text-bg-success align-self-start">Template ready</span>{% else %}<span class="badge text-bg-warning align-self-start">No template</span>{% endif %}</div>
+    <div class="small text-secondary mb-3">{{ it.w.start_datetime|date:"j M Y" }}</div>
+    <div class="row text-center g-2 mb-3">
+      <div class="col-3"><div class="cnum">{{ it.registered }}</div><div class="small text-secondary">Registered</div></div>
+      <div class="col-3"><div class="cnum">{{ it.verified }}</div><div class="small text-secondary">Payment ok</div></div>
+      <div class="col-3"><div class="cnum">{{ it.feedback }}</div><div class="small text-secondary">Feedback</div></div>
+      <div class="col-3"><div class="cnum">{{ it.sent }}</div><div class="small text-secondary">Sent</div></div>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-e2e-green btn-sm" href="{% url 'certificate_setup' it.w.pk %}"><i class="bi bi-upload me-1"></i>{% if it.w.has_certificate %}Edit certificate{% else %}Upload certificate{% endif %}</a>
+      <a class="btn btn-outline-e2e btn-sm" href="{% url 'registrations' %}?workshop={{ it.w.pk }}">Students ({{ it.ready }} ready)</a>
+    </div></div></div>
+  {% empty %}<div class="col-12"><div class="state-box"><i class="bi bi-award"></i>No workshops yet. Create one under Manage workshops.</div></div>{% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

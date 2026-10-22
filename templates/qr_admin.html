@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}QR codes | Errors2Experts{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block content %}
+<div class="container py-4">
+  {% include "_dash_nav.html" with active="qr" %}
+  <div class="card-e2e p-3 mb-3">
+    <h2 class="h5 fw-bold">QR code for any link</h2>
+    <p class="small text-secondary mb-3">Paste a link (a Google Form, a brochure, a video, the website) and get a QR code you can download and print.</p>
+    <form method="get" class="row g-2 align-items-end">
+      <div class="col-md-7"><label class="form-label small" for="qr-link">Link</label><input class="form-control" id="qr-link" name="link" type="url" inputmode="url" placeholder="https://example.com/anything" value="{{ link }}" required></div>
+      <div class="col-md-3"><label class="form-label small" for="qr-cap">Text under the QR (optional)</label><input class="form-control" id="qr-cap" name="caption" maxlength="60" placeholder="Scan me" value="{{ caption }}"></div>
+      <div class="col-md-2"><button class="btn btn-e2e w-100" type="submit"><i class="bi bi-qr-code me-1"></i>Generate</button></div>
+    </form>
+    {% if error %}<div class="alert alert-danger mt-3 mb-0 py-2 small">{{ error }}</div>{% endif %}
+    {% if custom %}
+    <div class="row g-3 align-items-center mt-2">
+      <div class="col-sm-5 text-center"><img src="{% url 'qr_custom_png' %}?{{ custom.qs }}" alt="QR code for {{ custom.link }}" class="img-fluid" style="max-width:300px"></div>
+      <div class="col-sm-7"><div class="small text-secondary">This QR opens:</div><div class="text-break fw-semibold mb-3">{{ custom.link }}</div>
+        <a class="btn btn-e2e-green btn-sm" href="{% url 'qr_custom_png' %}?{{ custom.qs }}&amp;download=1"><i class="bi bi-download me-1"></i>Download PNG</a>
+        <div class="form-text">Test it with a phone camera before printing.</div></div>
+    </div>{% endif %}
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6"><div class="card-e2e p-3 qr-wrap">
+      <h2 class="h5 fw-bold">Permanent registration QR</h2>
+      <p class="small text-secondary">Always points to the registration page. It never changes when the weekly workshop changes. Print this one.</p>
+      <img src="{% url 'qr_png' 'permanent' %}" alt="Permanent registration QR code" class="my-2" style="max-width:300px;width:100%">
+      <div class="small text-break mb-2">{{ SITE_URL }}{% url 'register' %}</div>
+      <div class="d-flex gap-2 justify-content-center"><a class="btn btn-e2e-green btn-sm" href="{% url 'qr_png' 'permanent' %}?download=1"><i class="bi bi-download me-1"></i>Download PNG</a><a class="btn btn-outline-e2e btn-sm" target="_blank" rel="noopener" href="{% url 'qr_print' 'permanent' %}"><i class="bi bi-printer me-1"></i>Print</a></div>
+      {% if "127.0.0.1" in SITE_URL or "localhost" in SITE_URL %}<div class="alert alert-warning small mt-3 mb-0 text-start">SITE_URL is still a local address. Phones cannot open it. Set SITE_URL in .env to your real website address before printing.</div>{% endif %}
+    </div></div>
+    <div class="col-md-6"><div class="card-e2e p-3">
+      <h2 class="h5 fw-bold">Per-workshop QR</h2>
+      <p class="small text-secondary">Opens the registration page for one specific workshop. Only published workshops are listed.</p>
+      {% for w in workshops %}<div class="d-flex justify-content-between align-items-center border-bottom py-2 gap-2"><span class="text-truncate">{{ w.title }}</span><span class="text-nowrap"><a class="btn btn-outline-e2e btn-sm" href="{% url 'qr_png' w.slug %}?download=1">PNG</a> <a class="btn btn-outline-e2e btn-sm" target="_blank" rel="noopener" href="{% url 'qr_print' w.slug %}">Print</a> <a class="btn btn-outline-secondary btn-sm" target="_blank" rel="noopener" href="{% url 'qr_png' w.slug %}">View</a></span></div>{% empty %}<div class="text-secondary small">Publish a workshop to get its QR code.</div>{% endfor %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}

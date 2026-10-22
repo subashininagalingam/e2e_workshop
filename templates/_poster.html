@@ -1,0 +1,1 @@
+{% if w.poster %}<div class="poster-frame{% if variant %} {{ variant }}{% endif %}" style="--poster:url('{{ w.poster.url }}')"><img class="poster" src="{{ w.poster.url }}" alt="Poster for {{ w.title }}" loading="lazy"></div>{% else %}<div class="poster-fallback{% if variant %} {{ variant }}{% endif %}" role="img" aria-label="{{ w.title }}">{{ w.title }}</div>{% endif %}

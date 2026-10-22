@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Payments | Errors2Experts{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block content %}
+<div class="container-xl py-4">
+  {% include "_dash_nav.html" with active="payments" %}
+  {% if error %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% else %}
+  <form class="card-e2e p-3 mb-3 d-flex flex-wrap gap-3 align-items-end" method="get">
+    <div><label class="form-label small" for="pw">Workshop</label><select class="form-select form-select-sm" id="pw" name="workshop" onchange="this.form.submit()"><option value="">All workshops</option>{% for w in workshops %}<option value="{{ w.pk }}" {% if chosen == w.pk|stringformat:"s" %}selected{% endif %}>{{ w.title }}</option>{% endfor %}</select></div>
+    <noscript><button class="btn btn-sm btn-e2e-green" type="submit">Show</button></noscript>
+    <div class="ms-auto small text-secondary">Amounts come from the fee each student paid when they registered.</div>
+  </form>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3"><div class="card-e2e stat-card"><div class="text-secondary small">Verified</div><div class="n text-success">&#8377;{{ totals.verified|floatformat:"-2" }}</div></div></div>
+    <div class="col-6 col-lg-3"><div class="card-e2e stat-card"><div class="text-secondary small">Waiting to be checked</div><div class="n">&#8377;{{ totals.pending|floatformat:"-2" }}</div></div></div>
+    <div class="col-6 col-lg-3"><div class="card-e2e stat-card"><div class="text-secondary small">Rejected</div><div class="n text-danger">&#8377;{{ totals.rejected|floatformat:"-2" }}</div></div></div>
+    <div class="col-6 col-lg-3"><div class="card-e2e stat-card"><div class="text-secondary small">Screenshots received</div><div class="n">{{ totals.screenshots }}</div></div></div>
+  </div>
+
+  <h2 class="h5">By workshop</h2>
+  <div class="card-e2e mb-4"><div class="table-responsive"><table class="table table-e2e align-middle mb-0"><thead><tr><th>Workshop</th><th>Fee</th><th>Students</th><th>Want certificate</th><th>Screenshots</th><th class="text-end">Verified</th><th class="text-end">Waiting</th><th class="text-end">Rejected</th></tr></thead><tbody>
+  {% for b in per %}<tr><td class="fw-semibold">{{ b.title }}</td><td>{% if b.fee %}&#8377;{{ b.fee|floatformat:"-2" }}{% else %}Free{% endif %}</td><td>{{ b.students }}</td><td>{{ b.wants }}</td><td>{{ b.screenshots }}</td><td class="text-end text-success fw-bold">&#8377;{{ b.verified|floatformat:"-2" }}</td><td class="text-end">&#8377;{{ b.pending|floatformat:"-2" }}</td><td class="text-end text-danger">&#8377;{{ b.rejected|floatformat:"-2" }}</td></tr>
+  {% empty %}<tr><td colspan="8"><div class="state-box border-0"><i class="bi bi-cash-coin"></i>No registrations yet.</div></td></tr>{% endfor %}
+  </tbody></table></div></div>
+
+  <h2 class="h5">Latest payments</h2>
+  <div class="card-e2e"><div class="table-responsive"><table class="table table-e2e align-middle mb-0"><thead><tr><th>Student</th><th>Workshop</th><th class="text-end">Amount</th><th>UTR</th><th>Status</th><th>Check</th></tr></thead><tbody>
+  {% for r in entries %}<tr>
+    <td><div class="fw-semibold">{{ r.full_name }}</div><div class="small text-secondary">{{ r.email }} &middot; {{ r.registered_at }}</div></td>
+    <td class="small">{{ r.workshop_title }}</td>
+    <td class="text-end fw-bold">&#8377;{{ r.amount_rs|floatformat:"-2" }}</td>
+    <td class="small">{{ r.payment_reference|default:"-" }}</td>
+    <td>{% if r.pay == "verified" %}<span class="badge text-bg-success">Verified</span>{% elif r.pay == "rejected" %}<span class="badge text-bg-danger">Rejected</span>{% else %}<span class="badge text-bg-warning">To check</span>{% endif %}</td>
+    <td class="small text-nowrap">{% if r.payment_screenshot %}<a href="{% url 'payment_proof' r.registration_id %}" target="_blank" rel="noopener"><i class="bi bi-image me-1"></i>Screenshot</a>{% else %}<span class="text-secondary">No screenshot</span>{% endif %}
+      <form method="post" action="{% url 'payment_set' r.registration_id %}" class="d-inline ms-2">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">{% if r.pay != "verified" %}<input type="hidden" name="status" value="verified"><button class="btn btn-sm btn-outline-success py-0" type="submit">Verify</button>{% else %}<input type="hidden" name="status" value="pending"><button class="btn btn-sm btn-outline-secondary py-0" type="submit">Undo</button>{% endif %}</form></td>
+  </tr>{% empty %}<tr><td colspan="6"><div class="state-box border-0"><i class="bi bi-cash-coin"></i>No payments yet.</div></td></tr>{% endfor %}
+  </tbody></table></div></div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Thank you | Errors2Experts{% endblock %}
+{% block content %}
+<div class="container py-5"><div class="row justify-content-center"><div class="col-lg-6"><div class="form-card text-center">
+  <div class="display-4 text-success"><i class="bi bi-heart-fill"></i></div>
+  <h1 class="h2">Thank you{% if name %}, {{ name }}{% endif %}!</h1>
+  <p class="text-secondary">Your feedback was received. It helps us make the next workshop better.</p>
+  {% if outcome == "sent" %}<div class="alert alert-success text-start"><i class="bi bi-award me-1"></i>Your certificate has been emailed to the address you registered with. Check your inbox (and spam folder).</div>
+  {% elif outcome == "waiting" %}<div class="alert alert-info text-start"><i class="bi bi-award me-1"></i>If you registered for this workshop, your certificate is emailed to your registered address as soon as the organisers have verified your payment.</div>{% endif %}
+  <a class="btn btn-e2e" href="{% url 'home' %}">Back to home</a>
+</div></div></div></div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Workshop Feedback | Errors2Experts{% endblock %}
+{% block content %}
+<div class="container py-5"><div class="row justify-content-center"><div class="col-lg-7 col-xl-6">
+  <h1 class="fw-bold mb-1">Workshop feedback</h1>
+  <p class="text-secondary mb-4">Tell us how the workshop went. Your name and feedback may appear on this website. Your email never does.</p>
+  {% if not form %}
+    <div class="state-box"><i class="bi bi-chat-heart"></i><div class="fw-bold text-dark">Feedback opens after a workshop is published</div><div><a href="{% url 'workshop_list' %}">See workshops</a></div></div>
+  {% else %}
+  <form method="post" class="form-card" novalidate>
+    {% csrf_token %}<input type="hidden" name="ts" value="{{ ts }}">
+    {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{% for e in form.non_field_errors %}<div>{{ e }}</div>{% endfor %}</div>{% endif %}
+    <div class="mb-3"><label for="{{ form.workshop.id_for_label }}" class="form-label req">{{ form.workshop.label }}</label>{{ form.workshop }}{% for e in form.workshop.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-6"><label for="{{ form.name.id_for_label }}" class="form-label req">{{ form.name.label }}</label>{{ form.name }}{% for e in form.name.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+      <div class="col-md-6"><label for="{{ form.email.id_for_label }}" class="form-label req">{{ form.email.label }}</label>{{ form.email }}{% for e in form.email.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+      <div class="col-12 form-text mt-1">{{ form.email.help_text }}</div>
+    </div>
+    <fieldset class="mb-3"><legend class="form-label req fs-6">{{ form.rating.label }}</legend>
+      <div class="star-input" role="radiogroup" aria-label="Rating from 1 to 5 stars">
+        {% for radio in form.rating %}{{ radio.tag }}<label for="{{ radio.id_for_label }}" title="{{ radio.choice_label }} star{{ radio.choice_label|pluralize }}"><i class="bi bi-star-fill"></i><span class="visually-hidden">{{ radio.choice_label }} star{{ radio.choice_label|pluralize }}</span></label>{% endfor %}
+      </div>
+      {% for e in form.rating.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+    </fieldset>
+    <div class="mb-3"><label for="{{ form.message.id_for_label }}" class="form-label req">{{ form.message.label }}</label>{{ form.message }}{% for e in form.message.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}</div>
+    <div class="hp-field" aria-hidden="true"><label for="{{ form.website.id_for_label }}">Website</label>{{ form.website }}</div>
+    <button class="btn btn-e2e btn-lg w-100" type="submit">Send feedback</button>
+  </form>
+  {% endif %}
+</div></div></div>
+{% endblock %}

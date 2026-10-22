@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Workshops | Errors2Experts{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="page-title mb-1">Workshops</h1>
+  <p class="text-secondary mb-4">Upcoming and running workshops are listed first. Finished workshops move to the bottom automatically.</p>
+
+  {% if hidden %}
+  <div class="alert alert-warning" role="status"><strong>Staff note:</strong> students cannot see these workshops yet.
+    <ul class="mb-0 mt-1">{% for w, why in hidden %}<li>{{ w.title }} ({{ w.start_datetime|date:"j M Y" }}) &ndash; {{ why }}. <a href="{% url 'admin:workshops_workshop_change' w.pk %}">Open to publish</a></li>{% endfor %}</ul></div>
+  {% endif %}
+
+  <h2 class="section-title mb-3">Upcoming workshops</h2>
+  <div class="row g-4">{% for w in live %}{% include "_card.html" %}{% empty %}<div class="col-12"><div class="state-box"><i class="bi bi-calendar-plus"></i><div class="fw-bold text-dark">No upcoming workshops right now</div><div>The next workshop appears here as soon as it is published. <a href="{% url 'feedback' %}">Attended one? Share feedback.</a></div></div></div>{% endfor %}</div>
+
+  {% if done %}<h2 class="section-title mt-5 mb-3">Completed workshops</h2><div class="row g-4">{% for w in done %}{% include "_card.html" %}{% endfor %}</div>{% endif %}
+</div>
+{% endblock %}

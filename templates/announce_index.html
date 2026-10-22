@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Announce | Errors2Experts{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block content %}
+<div class="container py-4">
+  {% include "_dash_nav.html" with active="announce" %}
+  <div class="how-bar mb-3"><i class="bi bi-info-circle me-1"></i>Email a new workshop to everyone who registered for an earlier one. Publish the workshop first, then open it here.</div>
+  <div class="card-e2e"><div class="table-responsive"><table class="table table-e2e align-middle mb-0"><thead><tr><th>Workshop</th><th>Date</th><th>Status</th><th>Announced</th><th></th></tr></thead><tbody>
+  {% for w in workshops %}<tr><td class="fw-semibold">{{ w.title }}</td><td class="small text-nowrap">{{ w.start_datetime|date:"j M Y" }}</td>
+    <td>{% if w.status == "published" %}<span class="badge text-bg-success">Published</span>{% else %}<span class="badge text-bg-secondary">{{ w.get_status_display }}</span>{% endif %}</td>
+    <td class="small">{% if w.announced_at %}{{ w.announced_at|date:"j M Y, g:i A" }}{% else %}<span class="text-secondary">Not yet</span>{% endif %}</td>
+    <td class="text-end"><a class="btn btn-e2e btn-sm" href="{% url 'announce' w.pk %}"><i class="bi bi-megaphone me-1"></i>Announce</a></td></tr>
+  {% empty %}<tr><td colspan="5"><div class="state-box border-0">No workshops yet.</div></td></tr>{% endfor %}
+  </tbody></table></div></div>
+</div>
+{% endblock %}

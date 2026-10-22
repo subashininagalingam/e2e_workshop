@@ -1,0 +1,14 @@
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+  <ul class="nav nav-pills admin-shell gap-1">
+    <li class="nav-item"><a class="nav-link {% if active == 'overview' %}active{% endif %}" href="{% url 'dashboard' %}">Overview</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'registrations' %}active{% endif %}" href="{% url 'registrations' %}">Students</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'payments' %}active{% endif %}" href="{% url 'payments' %}">Payments</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'feedback' %}active{% endif %}" href="{% url 'feedback_admin' %}">Feedback</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'certificates' %}active{% endif %}" href="{% url 'certificates' %}">Certificates</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'announce' %}active{% endif %}" href="{% url 'announce_index' %}">Announce</a></li>
+    <li class="nav-item"><a class="nav-link {% if active == 'qr' %}active{% endif %}" href="{% url 'qr_admin' %}">QR codes</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'admin:workshops_workshop_changelist' %}">Manage workshops</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'admin:workshops_galleryimage_changelist' %}">Photos</a></li>
+  </ul>
+  <form method="post" action="{% url 'admin:logout' %}">{% csrf_token %}<button class="btn btn-sm btn-outline-secondary" type="submit">Sign out</button></form>
+</div>

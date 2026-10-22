@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Errors2Experts{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>{% endblock %}
+{% block content %}
+<div class="container py-4">
+  {% include "_dash_nav.html" with active="overview" %}
+  {% if error %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% else %}
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-4"><div class="card-e2e stat-card"><div class="text-secondary small"><i class="bi bi-people me-1"></i>Total registrations</div><div class="n">{{ total }}</div></div></div>
+    <div class="col-6 col-lg-4"><div class="card-e2e stat-card"><div class="text-secondary small"><i class="bi bi-calendar-event me-1"></i>Workshops</div><div class="n">{{ workshop_count }}</div></div></div>
+    <div class="col-6 col-lg-4"><div class="card-e2e stat-card"><div class="text-secondary small"><i class="bi bi-cash-coin me-1"></i>Amount verified</div><div class="n">&#8377;{{ verified_rs|floatformat:"-2" }}</div><a class="small" href="{% url 'payments' %}">Payment details</a></div></div>
+    <div class="col-6 col-lg-4"><div class="card-e2e stat-card"><div class="text-secondary small"><i class="bi bi-hourglass-split me-1"></i>Amount waiting to be checked</div><div class="n">&#8377;{{ pending_rs|floatformat:"-2" }}</div><a class="small" href="{% url 'registrations' %}?payment=pending">Check screenshots</a></div></div>
+    <div class="col-12 col-lg-4"><div class="card-e2e stat-card"><div class="text-secondary small"><i class="bi bi-envelope-exclamation me-1"></i>Email failures</div><div class="n">{{ email_failures }}</div>{% if email_failures %}<a class="small" href="{% url 'registrations' %}">Review and retry</a>{% endif %}</div></div>
+  </div>
+  <div class="row g-3 mb-4">
+    <div class="col-lg-7"><div class="card-e2e p-3"><h2 class="h6 fw-bold">Registrations per day</h2>{% if trend.labels %}<div style="height:260px"><canvas id="trend" aria-label="Registrations per day"></canvas></div>{{ trend|json_script:"trend-data" }}{% else %}<div class="text-secondary small py-4">No registrations yet.</div>{% endif %}</div></div>
+    <div class="col-lg-5"><div class="card-e2e p-3"><h2 class="h6 fw-bold">By workshop</h2>{% for title, n in by_workshop %}<div class="d-flex justify-content-between border-bottom py-1"><span class="text-truncate me-2">{{ title }}</span><strong>{{ n }}</strong></div>{% empty %}<div class="text-secondary small">No registrations yet.</div>{% endfor %}</div></div>
+  </div>
+  <div class="card-e2e p-3 mb-3"><h2 class="h6 fw-bold">Latest registrations</h2>
+    <div class="table-responsive"><table class="table table-e2e align-middle mb-0"><thead><tr><th>ID</th><th>When</th><th>Name</th><th>Workshop</th><th>Email status</th></tr></thead><tbody>
+    {% for r in recent %}<tr><td class="small">{{ r.registration_id }}</td><td class="small">{{ r.registered_at }}</td><td>{{ r.full_name }}</td><td class="small">{{ r.workshop_title }}</td><td class="small">{{ r.email_status }}</td></tr>{% empty %}<tr><td colspan="5" class="text-secondary">Nothing yet.</td></tr>{% endfor %}
+    </tbody></table></div></div>
+  <p class="small text-secondary">All registrations are stored in one Excel file on the server: <code>{{ excel_path }}</code>. Use the Download button to get a copy. Do not open the live file in Excel while students are registering.</p>
+  {% endif %}
+</div>
+{% endblock %}
