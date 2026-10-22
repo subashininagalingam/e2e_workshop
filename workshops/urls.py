@@ -1,5 +1,6 @@
 from django.urls import path
-
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
@@ -38,4 +39,4 @@ urlpatterns = [
     path("dashboard/payment/<str:reg_id>/upload/", views.payment_upload, name="payment_upload"),
     path("dashboard/qr/", views.qr_admin, name="qr_admin"),
     path("dashboard/qr/custom.png", views.qr_custom_png, name="qr_custom_png"),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

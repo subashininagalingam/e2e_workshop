@@ -8,6 +8,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
+from cloudinary.models import CloudinaryField
 
 RESERVED_SLUGS = {"permanent"}
 
@@ -61,7 +62,7 @@ class Workshop(models.Model):
     venue = models.CharField("Venue (offline / hybrid)", max_length=250, blank=True)
     meeting_link = models.URLField("Meeting link (online / hybrid)", blank=True,
                                    help_text="Only emailed to registered students. Never shown on the website.")
-    poster = models.ImageField("Poster / banner", upload_to="posters/", blank=True)
+    poster = CloudinaryField("Poster / banner", folder="posters", use_filename=True, unique_filename=True, blank=True)
     trainer = models.CharField(max_length=150, blank=True)
     trainer_bio = models.TextField(blank=True)
     topics = models.TextField(blank=True, help_text="One topic per line.")
@@ -76,11 +77,11 @@ class Workshop(models.Model):
     fee = models.DecimalField("Fee (₹)", max_digits=8, decimal_places=2, null=True, blank=True,
                               help_text="Blank or 0 means free. Change this every week with the workshop.")
     payment_upi = models.CharField("UPI ID", max_length=100, blank=True)
-    payment_qr = models.ImageField("Payment QR image", upload_to="payment/", blank=True,
+    payment_qr = CloudinaryField("Payment QR image", folder="payment", use_filename=True, unique_filename=True, blank=True,
                                    help_text="Upload this week's QR. If left empty, a QR is made from the UPI ID and the fee.")
     # ---- certificate (every workshop has its own template) ----
-    cert_template = models.ImageField(
-        "Certificate template", upload_to="", storage=private_cert_storage, blank=True,
+    cert_template = CloudinaryField(
+        "Certificate template", folder="certificates", use_filename=True, unique_filename=True, blank=True,
         help_text="This workshop's blank certificate as a JPG or PNG. The student's name is written on it automatically.")
     cert_name_x = models.FloatField("Name position, left to right (%)", default=50.0,
                                     validators=[MinValueValidator(0), MaxValueValidator(100)])
@@ -221,7 +222,7 @@ class GalleryImage(models.Model):
 
     workshop = models.ForeignKey(Workshop, null=True, blank=True, on_delete=models.SET_NULL, related_name="gallery")
     kind = models.CharField(max_length=10, choices=KIND_CHOICES, default="attendees")
-    image = models.ImageField(upload_to="gallery/")
+    image = CloudinaryField("Image", folder="gallery", use_filename=True, unique_filename=True, blank=True)
     caption = models.CharField(max_length=150, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

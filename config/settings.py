@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import dj_database_url
+import cloudinary
 
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
@@ -31,6 +32,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    'cloudinary',
+    'cloudinary_storage',
+
     "workshops",
 ]
 
@@ -67,7 +72,6 @@ TEMPLATES = [
 
 # Small database used ONLY for workshops and admin logins. Registrations are NOT stored here.
 # DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
-
 
 DATABASES = {'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))}
 
@@ -150,3 +154,16 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_AGE = 8 * 60 * 60
 X_FRAME_OPTIONS = "DENY"
 SECURE_CONTENT_TYPE_NOSNIFF = True
+
+cloudinary.config(
+    cloud_name='dxslozfwa',
+    api_key='761268614366864',
+    api_secret='0rEtaxo9thaaIB_ieP-GnsUMdII',
+    secure=True
+)
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dxslozfwa',
+    'API_KEY':'761268614366864',
+    'API_SECRET': '0rEtaxo9thaaIB_ieP-GnsUMdII',
+}
